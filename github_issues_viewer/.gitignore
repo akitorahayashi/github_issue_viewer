@@ -1,43 +1,56 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutterの依存ファイル
 .dart_tool/
+.packages
+.pub/
+build/
+
+# 環境変数ファイル
+*.env
+
+# Android
+android/.gradle/
+android/app/build/
+android/app/google-services.json
+android/local.properties
+
+# iOS
+ios/Runner/GoogleService-Info.plist
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+
+# macOS
+macOS/Runner.xcodeproj/
+macOS/Runner.xcworkspace/
+macOS/Runner/GoogleService-Info.plist
+
+Pods/
+DerivedData/
+flutter_export_environment.sh
+flutter_export_environment.xcconfig
+
+lib/firebase_options.dart
+
+.DS_Store
+
+# Pubによって作成されたファイルとディレクトリ
+.dart_tool/
+.packages
+build/
+
+# ドキュメント生成用ディレクトリ
+doc/api/
+
+# dotenv環境変数ファイル
+.env*
+
+# JavaScript生成ファイル（必要な場合のみ）
+*.dart.js
+*.info.json      # --dump-infoフラグによって生成される
+*.js             # dart2jsによって生成された場合
+*.js_
+*.js.deps
+*.js.map
+
+# プラグイン関連ファイル
 .flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release

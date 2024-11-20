@@ -5,5 +5,6 @@ import '../model/gv_graphql_client.dart';
 final issuesProvider =
     FutureProvider.family<List<GvIssue>, String>((ref, label) async {
   final githubService = GVGraphqlClient();
-  return githubService.fetchIssues(label);
+  final List<GvIssue> issues = await githubService.fetchIssues(label);
+  return issues;
 });

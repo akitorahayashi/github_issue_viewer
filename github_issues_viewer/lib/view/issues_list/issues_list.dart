@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../provider/issues_provider.dart';
+import 'package:github_issues_viewer/view/issues_list/issue_row.dart';
+import '../../provider/issues_provider.dart';
 
-class IssuesListScreen extends ConsumerWidget {
+class IssuesList extends ConsumerWidget {
   final String label;
 
-  const IssuesListScreen({super.key, required this.label});
+  const IssuesList({super.key, required this.label});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,13 +17,7 @@ class IssuesListScreen extends ConsumerWidget {
         itemCount: data.length,
         itemBuilder: (context, index) {
           final issue = data[index];
-          return ListTile(
-            title: Text(issue.title),
-            subtitle: Text(issue.body),
-            onTap: () {
-              // Issue詳細画面への遷移を実装可能
-            },
-          );
+          return IssueRow(gvIssue: issue);
         },
       ),
       loading: () => const Center(child: CircularProgressIndicator()),

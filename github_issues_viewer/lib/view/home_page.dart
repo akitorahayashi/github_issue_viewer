@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/view/issues_list.dart';
+import 'package:github_issues_viewer/view/issues_list/issues_list.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -23,15 +23,18 @@ class MyHomePage extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(
-          children: [
-            IssuesListScreen(label: ''),
-            IssuesListScreen(label: 'p: webview'),
-            IssuesListScreen(label: 'p: shared_preferences'),
-            IssuesListScreen(label: 'waiting for customer response'),
-            IssuesListScreen(label: 'severe: new feature'),
-            IssuesListScreen(label: 'p: share'),
-          ],
+        body: const Padding(
+          padding: EdgeInsets.only(top: 8.0),
+          child: TabBarView(
+            children: [
+              IssuesList(label: ''),
+              IssuesList(label: 'p: webview'),
+              IssuesList(label: 'p: shared_preferences'),
+              IssuesList(label: 'waiting for customer response'),
+              IssuesList(label: 'severe: new feature'),
+              IssuesList(label: 'p: share'),
+            ],
+          ),
         ),
       ),
     );

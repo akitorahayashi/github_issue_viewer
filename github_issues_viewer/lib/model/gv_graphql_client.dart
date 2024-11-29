@@ -27,31 +27,50 @@ class GVGraphqlClient {
     );
   }
 
-  Future<List<GVIssue>> fetchIssues(String label) async {
+  Future<List<GVIssue>> fetchIssues({String? label}) async {
     final client = getGraphQLClient();
 
-    // クエリ（labelをクエリ変数として渡す）
-    const query = '''
-      query GetIssues(\$label: String!) {
-        repository(owner: "flutter", name: "flutter") {
-          issues(labels: [\$label], first: 10) {
-            edges {
-              node {
-                title
-                body
-                url
+    // クエリを条件で分岐
+    final query = label != null
+        ? '''
+        query GetIssues(\$label: String!) {
+          repository(owner: "flutter", name: "flutter") {
+            issues(labels: [\$label], first: 10) {
+              edges {
+                node {
+                  title
+                  body
+                  url
+                }
               }
             }
           }
         }
-      }
-    ''';
+      '''
+        : '''
+        query GetAllIssues {
+          repository(owner: "flutter", name: "flutter") {
+            issues(first: 10) {
+              edges {
+                node {
+                  title
+                  body
+                  url
+                }
+              }
+            }
+          }
+        }
+      ''';
+
+    // クエリ変数を動的に設定
+    final Map<String, dynamic> variables =
+        label != null ? {'label': label} : {};
 
     final result = await client.query(
       QueryOptions(
         document: gql(query),
-        // 変数を伝える
-        variables: {'label': label},
+        variables: variables,
       ),
     );
 

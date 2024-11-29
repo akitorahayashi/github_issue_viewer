@@ -4,7 +4,7 @@ import 'package:github_issues_viewer/view/issues_list/issue_row.dart';
 import '../../provider/issues_provider.dart';
 
 class IssuesList extends ConsumerWidget {
-  final String label;
+  final String? label;
 
   const IssuesList({super.key, required this.label});
 

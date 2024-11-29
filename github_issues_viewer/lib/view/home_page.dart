@@ -27,7 +27,7 @@ class MyHomePage extends StatelessWidget {
           padding: EdgeInsets.only(top: 8.0),
           child: TabBarView(
             children: [
-              IssuesList(label: ''),
+              IssuesList(label: null),
               IssuesList(label: 'p: webview'),
               IssuesList(label: 'p: shared_preferences'),
               IssuesList(label: 'waiting for customer response'),

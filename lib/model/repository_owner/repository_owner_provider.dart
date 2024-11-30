@@ -5,19 +5,33 @@ import 'repository_owner.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class RepositoryOwnerState {
+  final RepositoryOwner? owner;
+  final bool isLoading;
+
+  RepositoryOwnerState({this.owner, this.isLoading = true});
+
+  RepositoryOwnerState copyWith({
+    required RepositoryOwner? owner,
+    required bool isLoading,
+  }) {
+    return RepositoryOwnerState(
+      owner: owner,
+      isLoading: isLoading,
+    );
+  }
+}
+
 // プロバイダー
 final repositoryOwnerProvider =
-    StateNotifierProvider<RepositoryOwnerNotifier, RepositoryOwner?>(
+    StateNotifierProvider<RepositoryOwnerNotifier, RepositoryOwnerState>(
   (ref) => RepositoryOwnerNotifier(),
 );
 
-class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
-  RepositoryOwnerNotifier() : super(null) {
+class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
+  RepositoryOwnerNotifier() : super(RepositoryOwnerState()) {
     _loadLoginFromPrefs();
   }
-
-  // ローディング状態を管理するフラグ
-  bool isLoading = true;
 
   Future<void> _loadLoginFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
@@ -26,8 +40,7 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
       await fetchOwnerData(login);
     } else {
       // ログイン情報がない場合は、ローディング終了
-      isLoading = false;
-      state = null;
+      state = state.copyWith(owner: null, isLoading: false);
     }
   }
 
@@ -83,22 +96,19 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
       }
 
       final owner = RepositoryOwner.fromJson({'user': result.data!['user']});
-      state = owner;
+      state = state.copyWith(owner: owner, isLoading: false);
 
       // ログイン情報をSharedPreferencesに保存
       _saveLoginToPrefs(ownerLogin);
     } catch (e) {
       print('Failed to fetch RepositoryOwner: $e');
-      state = null;
+      state = state.copyWith(owner: null, isLoading: false);
       _removeLoginFromPrefs();
-    } finally {
-      isLoading = false;
-      state = state;
     }
   }
 
   Future<void> logout() async {
-    state = null;
+    state = state.copyWith(owner: null, isLoading: false);
     _removeLoginFromPrefs();
   }
 }

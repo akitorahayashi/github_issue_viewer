@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:github_issues_viewer/model/repository_owner.dart';
-import 'package:github_issues_viewer/model/giv_graphql_client.dart'; // GIVGraphqlClientをインポート
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -11,7 +10,6 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final TextEditingController _controller = TextEditingController();
-  String? _ownerLogin;
   RepositoryOwner? _ownerData;
   bool _isLoading = false;
   String? _errorMessage;

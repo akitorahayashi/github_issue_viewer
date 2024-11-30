@@ -5,14 +5,7 @@ class GIVGraphqlClient {
   static final String? token = dotenv.env['GITHUB_PERSONAL_ACCESS_TOKEN'];
   static const String apiEndpoint = 'https://api.github.com/graphql';
 
-  GIVGraphqlClient() {
-    if (token == null) {
-      throw Exception(
-          '.envから GITHUB_PERSONAL_ACCESS_TOKEN または GITHUB_GRAPHQL_API が読み取れていません');
-    }
-  }
-
-  GraphQLClient getGraphQLClient() {
+  static GraphQLClient getGraphQLClient() {
     final link = HttpLink(
       apiEndpoint,
       defaultHeaders: {

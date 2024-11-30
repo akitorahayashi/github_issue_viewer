@@ -18,8 +18,7 @@ class OwnerCard extends StatelessWidget {
             padding: const EdgeInsets.all(1.0),
             child: CircleAvatar(
               radius: 24,
-              backgroundImage:
-                  NetworkImage(owner.avatarUrl), // アバター画像をURLから読み込む
+              backgroundImage: NetworkImage(owner.avatarUrl),
             ),
           ),
         ),

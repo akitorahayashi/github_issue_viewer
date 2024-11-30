@@ -17,19 +17,19 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
 
   // ラベルによってIssueを取得
   Future<void> fetchIssues({
-    required String owner,
+    required String login,
     required String name,
     String? label,
   }) async {
     state = const AsyncValue.loading();
 
-    final client = GIVGraphqlClient().getGraphQLClient();
+    final client = GIVGraphqlClient.getGraphQLClient();
 
     // クエリを条件で分岐
     final query = label != null
         ? '''
-          query GetIssues(\$owner: String!, \$name: String!, \$label: String!) {
-            repository(owner: \$owner, name: \$name) {
+          query GetIssues(\$login: String!, \$name: String!, \$label: String!) {
+            repository(owner: \$login, name: \$name) {
               issues(labels: [\$label], first: 10) {
                 edges {
                   node {
@@ -48,9 +48,9 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
           }
         '''
         : '''
-          query GetAllIssues(\$owner: String!, \$name: String!) {
-            repository(owner: \$owner, name: \$name) {
-              issues(first: 10) {
+          query GetAllIssues(\$login: String!, \$name: String!) {
+            repository(owner: \$login, name: \$name) {
+              issues(first: 20) {
                 edges {
                   node {
                     title
@@ -70,7 +70,7 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
 
     // クエリ変数を動的に設定
     final Map<String, dynamic> variables = {
-      'owner': owner,
+      'login': login, // loginをownerに変換
       'name': name,
       if (label != null) 'label': label,
     };
@@ -105,54 +105,6 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
       }).toList());
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-    }
-  }
-
-  // ラベルを取得する関数
-  Future<void> fetchLabels({
-    required String owner,
-    required String name,
-  }) async {
-    final client = GIVGraphqlClient().getGraphQLClient();
-
-    const String query = '''
-      query GetLabels(\$owner: String!, \$name: String!) {
-        repository(owner: \$owner, name: \$name) {
-          labels(first: 100) {
-            edges {
-              node {
-                name
-              }
-            }
-          }
-        }
-      }
-    ''';
-
-    final Map<String, dynamic> variables = {
-      'owner': owner,
-      'name': name,
-    };
-
-    try {
-      final result = await client.query(
-        QueryOptions(
-          document: gql(query),
-          variables: variables,
-        ),
-      );
-
-      if (result.hasException) {
-        throw Exception('GraphQL Exception: ${result.exception.toString()}');
-      }
-
-      // ラベルをパースしてstateに格納
-      final labels = result.data!['repository']['labels']['edges'] as List;
-      labelsState = AsyncValue.data(
-        labels.map((label) => label['node']['name'] as String).toList(),
-      );
-    } catch (e, stack) {
-      labelsState = AsyncValue.error(e, stack);
     }
   }
 }

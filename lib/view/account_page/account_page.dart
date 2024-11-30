@@ -15,20 +15,15 @@ class _AccountPageState extends ConsumerState<AccountPage> {
   @override
   Widget build(BuildContext context) {
     final owner = ref.watch(repositoryOwnerProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('GitHub Issues Viewer'),
       ),
-      body: AnimatedCrossFade(
-        duration: const Duration(milliseconds: 500),
-        crossFadeState: owner == null
-            ? CrossFadeState.showFirst
-            : CrossFadeState.showSecond,
-        firstChild: LoginForm(),
-        secondChild: owner == null
-            ? const SizedBox.shrink()
-            : RepositoryList(owner: owner),
-      ),
+      body: owner == null
+          ? LoginForm() // `owner` が null の場合は LoginForm を表示
+          : RepositoryList(
+              owner: owner), // `owner` が null でない場合は RepositoryList を表示
     );
   }
 }

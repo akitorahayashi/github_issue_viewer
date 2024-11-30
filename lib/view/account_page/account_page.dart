@@ -15,15 +15,17 @@ class _AccountPageState extends ConsumerState<AccountPage> {
   @override
   Widget build(BuildContext context) {
     final owner = ref.watch(repositoryOwnerProvider);
+    final isLoading = ref.watch(repositoryOwnerProvider.notifier).isLoading;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('GitHub Issues Viewer'),
       ),
-      body: owner == null
-          ? LoginForm() // `owner` が null の場合は LoginForm を表示
-          : RepositoryList(
-              owner: owner), // `owner` が null でない場合は RepositoryList を表示
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : owner == null
+              ? LoginForm()
+              : RepositoryList(owner: owner),
     );
   }
 }

@@ -34,7 +34,6 @@ class RepositoryRow extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (repository.primaryLanguage != null)
                     Container(
@@ -53,6 +52,11 @@ class RepositoryRow extends StatelessWidget {
                         ),
                       ),
                     ),
+                  const Spacer(),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 3.0),
+                    child: Icon(Icons.refresh, color: Colors.grey, size: 12),
+                  ),
                   Text(
                     formatDate(repository.updatedAt),
                     style: const TextStyle(fontSize: 12, color: Colors.grey),

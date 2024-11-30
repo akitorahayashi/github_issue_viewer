@@ -13,8 +13,12 @@ class RepositoryList extends ConsumerWidget {
     return ListView(
       children: [
         const SizedBox(height: 16),
+        // 自分のアカウントの情報を表示
         OwnerCard(owner: owner),
+        // 所有するリポジトリの情報を表示
         for (final repo in owner.repositories) RepositoryRow(repository: repo),
+        // スペーサー
+        const SizedBox(height: 250),
       ],
     );
   }

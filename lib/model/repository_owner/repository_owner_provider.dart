@@ -16,6 +16,9 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
     _loadLoginFromPrefs();
   }
 
+  // ローディング状態を管理するフラグ
+  bool isLoading = true;
+
   Future<void> _loadLoginFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final login = prefs.getString('ownerLogin');
@@ -29,6 +32,12 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
     await prefs.setString('ownerLogin', login);
   }
 
+  Future<void> _removeLoginFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('ownerLogin');
+  }
+
+  // データを取得して状態を更新する
   // データを取得して状態を更新する
   Future<void> fetchOwnerData(String ownerLogin) async {
     try {
@@ -72,12 +81,16 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
 
       final owner = RepositoryOwner.fromJson({'user': result.data!['user']});
       state = owner;
+
+      // ログイン情報をSharedPreferencesに保存
       _saveLoginToPrefs(ownerLogin);
-      // この時点でprefにsaveする
     } catch (e) {
       print('Failed to fetch RepositoryOwner: $e');
       state = null;
-      rethrow;
+      _removeLoginFromPrefs();
+    } finally {
+      isLoading = false; // データ取得後はローディングを終了
+      state = state; // 状態を更新
     }
   }
 }

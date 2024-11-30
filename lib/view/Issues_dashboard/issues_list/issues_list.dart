@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/view/home_page/issues_list/issue_row.dart';
+import 'package:github_issues_viewer/view/Issues_dashboard/issues_list/issue_row.dart';
 import '../../../model/giv_issues/issues_provider.dart';
 
 class IssuesList extends ConsumerStatefulWidget {

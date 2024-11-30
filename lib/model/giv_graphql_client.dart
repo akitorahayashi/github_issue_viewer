@@ -1,5 +1,4 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:github_issues_viewer/model/giv_issues/giv_issue.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GIVGraphqlClient {

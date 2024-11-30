@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/repository_owner/ro_provider.dart';
+import 'package:github_issues_viewer/model/repository_owner/repository_owner_provider.dart';
 
 class AccountPage extends ConsumerWidget {
   final TextEditingController _controller = TextEditingController();
@@ -52,7 +52,7 @@ class AccountPage extends ConsumerWidget {
               Image.network(owner.avatarUrl, height: 100),
               SizedBox(height: 16),
               Text('Repositories:'),
-              ...owner.repositories.map((repo) => Text(repo)).toList(),
+              ...owner.repositories.map((repo) => Text(repo.name)).toList(),
             ],
           ],
         ),

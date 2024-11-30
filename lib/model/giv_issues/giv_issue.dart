@@ -5,6 +5,7 @@ class GIVIssue {
   final String createdAt;
   final String author;
   final String githubUrl;
+  final bool isClosed;
 
   GIVIssue({
     required this.title,
@@ -13,5 +14,6 @@ class GIVIssue {
     required this.createdAt,
     required this.author,
     required this.githubUrl,
+    required this.isClosed,
   });
 }

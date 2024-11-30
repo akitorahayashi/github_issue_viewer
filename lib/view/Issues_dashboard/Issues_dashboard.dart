@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:github_issues_viewer/view/account_page/account_page.dart';
-import 'package:github_issues_viewer/view/home_page/issues_list/issues_list.dart';
+import 'package:github_issues_viewer/view/Issues_dashboard/issues_list/issues_list.dart';
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+class IssuesDashboard extends StatelessWidget {
+  const IssuesDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {

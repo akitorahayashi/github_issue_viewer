@@ -16,7 +16,7 @@ class RepositoryOwnerState {
     bool? isLoading,
   }) {
     return RepositoryOwnerState(
-      owner: owner ?? this.owner,
+      owner: owner,
       isLoading: isLoading ?? this.isLoading,
     );
   }
@@ -114,8 +114,10 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
 
   // ログアウト処理
   Future<void> logout() async {
-    state = state.copyWith(owner: null, isLoading: false);
-    print('Logged out');
+    state = state.copyWith(owner: null, isLoading: true); // ログアウト中にローディング状態を反映
     await _removeLoginFromPrefs();
+    print("Logout");
+    print(state.owner);
+    state = state.copyWith(owner: null, isLoading: false); // ローディングを終了
   }
 }

@@ -9,9 +9,9 @@ class LoginForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(repositoryOwnerProvider.notifier);
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Center(
         child: Card(
           child: SizedBox(
             height: 200,

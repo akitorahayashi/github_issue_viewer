@@ -26,7 +26,7 @@ class RepositoryRow extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   repository.description!,
-                  maxLines: 2,
+                  maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),

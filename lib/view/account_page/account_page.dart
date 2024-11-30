@@ -25,8 +25,9 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             ? CrossFadeState.showFirst
             : CrossFadeState.showSecond,
         firstChild: LoginForm(),
-        secondChild:
-            owner == null ? const SizedBox.shrink() : const RepositoryList(),
+        secondChild: owner == null
+            ? const SizedBox.shrink()
+            : RepositoryList(owner: owner),
       ),
     );
   }

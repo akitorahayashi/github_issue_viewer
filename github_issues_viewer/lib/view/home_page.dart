@@ -11,6 +11,12 @@ class MyHomePage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('GitHub Issues Viewer'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.account_circle_outlined),
+              onPressed: () {},
+            ),
+          ],
           bottom: const TabBar(
             isScrollable: true,
             tabs: [

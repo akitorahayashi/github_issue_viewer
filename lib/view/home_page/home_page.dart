@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/view/issues_list/issues_list.dart';
+import 'package:github_issues_viewer/view/account_page/account_page.dart';
+import 'package:github_issues_viewer/view/home_page/issues_list/issues_list.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -14,7 +15,11 @@ class MyHomePage extends StatelessWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.account_circle_outlined),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const AccountPage();
+                }));
+              },
             ),
           ],
           bottom: const TabBar(

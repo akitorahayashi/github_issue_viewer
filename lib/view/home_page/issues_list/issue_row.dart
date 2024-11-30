@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/model/gv_issue.dart';
+import 'package:github_issues_viewer/model/giv_issue.dart';
 
 class IssueRow extends StatefulWidget {
-  final GVIssue gvIssue;
+  final GIVIssue gvIssue;
   const IssueRow({super.key, required this.gvIssue});
 
   @override

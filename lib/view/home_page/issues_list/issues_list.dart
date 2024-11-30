@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/view/issues_list/issue_row.dart';
-import '../../provider/issues_provider.dart';
+import 'package:github_issues_viewer/view/home_page/issues_list/issue_row.dart';
+import '../../../provider/issues_provider.dart';
 
 class IssuesList extends ConsumerWidget {
   final String? label;

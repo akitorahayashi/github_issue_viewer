@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/view/home_page.dart';
+import 'package:github_issues_viewer/view/home_page/home_page.dart';
 
 class GithubIssuesViewerApp extends StatelessWidget {
   const GithubIssuesViewerApp({super.key});

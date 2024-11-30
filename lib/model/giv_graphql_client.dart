@@ -1,12 +1,12 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:github_issues_viewer/model/gv_issue.dart';
+import 'package:github_issues_viewer/model/giv_issue.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class GVGraphqlClient {
-  final String? token = dotenv.env['GITHUB_PERSONAL_ACCESS_TOKEN'];
-  final String apiEndpoint = 'https://api.github.com/graphql';
+class GIVGraphqlClient {
+  static final String? token = dotenv.env['GITHUB_PERSONAL_ACCESS_TOKEN'];
+  static const String apiEndpoint = 'https://api.github.com/graphql';
 
-  GVGraphqlClient() {
+  GIVGraphqlClient() {
     if (token == null) {
       throw Exception(
           '.envから GITHUB_PERSONAL_ACCESS_TOKEN または GITHUB_GRAPHQL_API が読み取れていません');
@@ -27,10 +27,10 @@ class GVGraphqlClient {
     );
   }
 
-  Future<List<GVIssue>> fetchIssues({
-    required String owner, // リポジトリオーナー
-    required String name, // リポジトリ名
-    String? label, // オプション: ラベル
+  Future<List<GIVIssue>> fetchIssues({
+    required String owner,
+    required String name,
+    String? label,
   }) async {
     final client = getGraphQLClient();
 
@@ -82,6 +82,7 @@ class GVGraphqlClient {
     );
 
     if (result.hasException) {
+      print(result.exception.toString());
       throw Exception('GraphQL Exception: ${result.exception.toString()}');
     }
 
@@ -89,7 +90,7 @@ class GVGraphqlClient {
     final issues = result.data!['repository']['issues']['edges'] as List;
     return issues.map((issue) {
       final node = issue['node'];
-      return GVIssue(
+      return GIVIssue(
         title: node['title'] ?? '',
         body: node['body'] ?? '',
         url: node['url'] ?? '',

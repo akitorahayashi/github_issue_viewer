@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:github_issues_viewer/model/repository_owner/giv_repository.dart';
 import 'package:github_issues_viewer/styles.dart';
+import 'package:github_issues_viewer/view/Issues_dashboard/Issues_dashboard.dart';
 
 class RepositoryRow extends StatelessWidget {
   final GIVRepository repository;
@@ -11,9 +12,16 @@ class RepositoryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
+        onTap: () => Navigator.push(
+            (context),
+            MaterialPageRoute(
+                builder: (context) => IssuesDashboard(repository: repository))),
         title: Text(
           repository.name,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

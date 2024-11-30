@@ -4,7 +4,6 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'repository_owner.dart';
 
-/// Repository Owner の状態を管理
 class RepositoryOwnerState {
   final RepositoryOwner? owner;
   final bool isLoading;
@@ -12,17 +11,17 @@ class RepositoryOwnerState {
   RepositoryOwnerState({this.owner, this.isLoading = true});
 
   RepositoryOwnerState copyWith({
-    RepositoryOwner? owner,
-    bool? isLoading,
+    required RepositoryOwner? owner,
+    required bool isLoading,
   }) {
     return RepositoryOwnerState(
       owner: owner,
-      isLoading: isLoading ?? this.isLoading,
+      isLoading: isLoading,
     );
   }
 }
 
-/// Provider の定義
+// Provider
 final repositoryOwnerProvider =
     StateNotifierProvider<RepositoryOwnerNotifier, RepositoryOwnerState>(
   (ref) => RepositoryOwnerNotifier(),
@@ -114,10 +113,8 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
 
   // ログアウト処理
   Future<void> logout() async {
-    state = state.copyWith(owner: null, isLoading: true); // ログアウト中にローディング状態を反映
+    state = state.copyWith(owner: null, isLoading: true);
     await _removeLoginFromPrefs();
-    print("Logout");
-    print(state.owner);
-    state = state.copyWith(owner: null, isLoading: false); // ローディングを終了
+    state = state.copyWith(owner: null, isLoading: false);
   }
 }

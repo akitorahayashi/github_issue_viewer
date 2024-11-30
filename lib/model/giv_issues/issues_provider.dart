@@ -23,7 +23,7 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
   }) async {
     state = const AsyncValue.loading();
 
-    final client = GIVGraphqlClient().getGraphQLClient();
+    final client = GIVGraphqlClient.getGraphQLClient();
 
     // クエリを条件で分岐
     final query = label != null
@@ -113,7 +113,7 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
     required String owner,
     required String name,
   }) async {
-    final client = GIVGraphqlClient().getGraphQLClient();
+    final client = GIVGraphqlClient.getGraphQLClient();
 
     const String query = '''
       query GetLabels(\$owner: String!, \$name: String!) {

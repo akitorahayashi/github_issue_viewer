@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_issues_viewer/model/repository_owner/repository_owner_provider.dart';
 import 'package:github_issues_viewer/view/issues_dashboard/issues_list/issue_row.dart';
 import '../../../model/giv_issues/issues_provider.dart';
 
 class IssuesList extends ConsumerStatefulWidget {
+  final String repositoryName;
   final String? label;
 
-  const IssuesList({super.key, required this.label});
+  const IssuesList({
+    super.key,
+    required this.repositoryName,
+    required this.label,
+  });
 
   @override
   ConsumerState<IssuesList> createState() => _IssuesListState();
@@ -17,11 +23,13 @@ class _IssuesListState extends ConsumerState<IssuesList> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(issuesProvider.notifier).fetchIssues(
-            owner: 'akitorahayashi',
-            name: 'today_list',
-            label: widget.label,
-          );
+      final issesNotifier = ref.read(issuesProvider.notifier);
+      final owner = ref.read(repositoryOwnerProvider).owner;
+      issesNotifier.fetchIssues(
+        login: owner!.login,
+        name: widget.repositoryName,
+        label: widget.label,
+      );
     });
   }
 

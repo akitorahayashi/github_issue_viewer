@@ -4,8 +4,6 @@ import 'package:github_issues_viewer/model/repository_owner/giv_repository.dart'
 import 'package:github_issues_viewer/model/repository_owner/repository_owner_provider.dart';
 import 'package:github_issues_viewer/view/Issues_dashboard/issues_list/issues_list.dart';
 
-import 'package:graphql_flutter/graphql_flutter.dart';
-
 class IssuesDashboard extends ConsumerStatefulWidget {
   final GIVRepository repository;
   const IssuesDashboard({super.key, required this.repository});
@@ -69,7 +67,10 @@ class IssuesDashboardState extends ConsumerState<IssuesDashboard> {
                 final labelForIssuesList = label == '全て' ? null : label;
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: IssuesList(label: labelForIssuesList),
+                  child: IssuesList(
+                    repositoryName: widget.repository.name,
+                    label: labelForIssuesList,
+                  ),
                 );
               }).toList(),
             ),

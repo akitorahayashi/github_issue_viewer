@@ -11,7 +11,7 @@ class GithubIssuesViewerApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
       ),
-      home: AccountPage(),
+      home: const AccountPage(),
     );
   }
 }

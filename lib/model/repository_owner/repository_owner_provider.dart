@@ -17,8 +17,9 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
   Future<void> fetchOwnerData(String ownerLogin) async {
     try {
       final String token = GIVGraphqlClient.token ?? '';
-      if (token.isEmpty)
+      if (token.isEmpty) {
         throw Exception('GitHub Personal Access Token が指定されていません。');
+      }
 
       final graphQLClient = GraphQLClient(
         link: HttpLink(GIVGraphqlClient.apiEndpoint,
@@ -49,8 +50,9 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
       final result = await graphQLClient.query(
           QueryOptions(document: gql(query), variables: {'login': ownerLogin}));
 
-      if (result.hasException)
+      if (result.hasException) {
         throw Exception('Failed to fetch data: ${result.exception.toString()}');
+      }
 
       final owner = RepositoryOwner.fromJson({'user': result.data!['user']});
       state = owner;

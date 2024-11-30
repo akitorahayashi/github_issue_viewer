@@ -16,38 +16,17 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
   // データを取得して状態を更新する
   Future<void> fetchOwnerData(String ownerLogin) async {
     try {
-      final owner = await _fetchOwnerDataFromApi(ownerLogin); // データを取得
-      state = owner; // 状態を更新
-    } catch (e) {
-      print('Failed to fetch RepositoryOwner: $e');
-      state = null; // エラー時は null に戻す
-      rethrow;
-    }
-  }
+      final String token = GIVGraphqlClient.token ?? '';
+      if (token.isEmpty)
+        throw Exception('GitHub Personal Access Token が指定されていません。');
 
-  // GitHub APIからリポジトリオーナーデータを取得するメソッド
-  Future<RepositoryOwner> _fetchOwnerDataFromApi(String ownerLogin) async {
-    // GIVGraphqlClientを使用してトークンとAPIエンドポイントを取得
-    final String token = GIVGraphqlClient.token ?? '';
-    if (token.isEmpty) {
-      throw Exception('GitHub Personal Access Token が指定されていません。');
-    }
+      final graphQLClient = GraphQLClient(
+        link: HttpLink(GIVGraphqlClient.apiEndpoint,
+            defaultHeaders: {'Authorization': 'Bearer $token'}),
+        cache: GraphQLCache(store: InMemoryStore()),
+      );
 
-    // Initialize GraphQL client using GIVGraphqlClient
-    final HttpLink httpLink = HttpLink(
-      GIVGraphqlClient.apiEndpoint,
-      defaultHeaders: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    final GraphQLClient graphQLClient = GraphQLClient(
-      link: httpLink,
-      cache: GraphQLCache(store: InMemoryStore()),
-    );
-
-    // GraphQL query for fetching owner data and repositories
-    const String query = '''
+      const query = '''
     query(\$login: String!) {
       user(login: \$login) {
         name
@@ -67,24 +46,18 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
     }
     ''';
 
-    // Query variables
-    final Map<String, dynamic> variables = {'login': ownerLogin};
+      final result = await graphQLClient.query(
+          QueryOptions(document: gql(query), variables: {'login': ownerLogin}));
 
-    // Send the request using GraphQLClient
-    final QueryResult result = await graphQLClient.query(
-      QueryOptions(
-        document: gql(query),
-        variables: variables,
-      ),
-    );
+      if (result.hasException)
+        throw Exception('Failed to fetch data: ${result.exception.toString()}');
 
-    if (result.hasException) {
-      print(result.exception.toString());
-      throw Exception('Failed to fetch data: ${result.exception.toString()}');
+      final owner = RepositoryOwner.fromJson({'user': result.data!['user']});
+      state = owner;
+    } catch (e) {
+      print('Failed to fetch RepositoryOwner: $e');
+      state = null;
+      rethrow;
     }
-
-    // Parse the result into RepositoryOwner object
-    final data = result.data!['user'];
-    return RepositoryOwner.fromJson({'user': data});
   }
 }

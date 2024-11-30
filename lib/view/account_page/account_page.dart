@@ -33,11 +33,24 @@ class _AccountPageState extends ConsumerState<AccountPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: ownerState.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ownerState.owner == null
-              ? LoginForm()
-              : RepositoryList(owner: ownerState.owner!),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        switchInCurve: Curves.easeInOut,
+        switchOutCurve: Curves.easeInOut,
+        child: ownerState.isLoading
+            ? const Center(
+                key: ValueKey('loading'),
+                child: CircularProgressIndicator(),
+              )
+            : ownerState.owner == null
+                ? LoginForm(
+                    key: const ValueKey('loginForm'),
+                  )
+                : RepositoryList(
+                    key: const ValueKey('repositoryList'),
+                    owner: ownerState.owner!,
+                  ),
+      ),
     );
   }
 }

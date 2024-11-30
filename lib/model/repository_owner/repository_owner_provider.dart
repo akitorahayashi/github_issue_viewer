@@ -61,8 +61,9 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
   Future<void> fetchOwnerData(String ownerLogin) async {
     try {
       final token = GIVGraphqlClient.token ?? '';
-      if (token.isEmpty)
+      if (token.isEmpty) {
         throw Exception('GitHub Personal Access Token が指定されていません。');
+      }
 
       final graphQLClient = GraphQLClient(
         link: HttpLink(
@@ -114,6 +115,7 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
   // ログアウト処理
   Future<void> logout() async {
     state = state.copyWith(owner: null, isLoading: false);
+    print('Logged out');
     await _removeLoginFromPrefs();
   }
 }

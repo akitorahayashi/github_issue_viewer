@@ -4,7 +4,7 @@ class RepositoryOwner {
   final String name;
   final String id;
   final String avatarUrl;
-  final List<GIVRepository> repositories; // Repositoryオブジェクトをリストで保持
+  final List<GIVRepository> repositories;
 
   RepositoryOwner({
     required this.name,

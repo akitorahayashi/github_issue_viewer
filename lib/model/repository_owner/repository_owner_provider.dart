@@ -23,7 +23,11 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
     final prefs = await SharedPreferences.getInstance();
     final login = prefs.getString('ownerLogin');
     if (login != null) {
-      await fetchOwnerData(login); // ロードしたloginでデータを取得
+      await fetchOwnerData(login);
+    } else {
+      // ログイン情報がない場合は、ローディング終了
+      isLoading = false;
+      state = null;
     }
   }
 
@@ -37,7 +41,6 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
     await prefs.remove('ownerLogin');
   }
 
-  // データを取得して状態を更新する
   // データを取得して状態を更新する
   Future<void> fetchOwnerData(String ownerLogin) async {
     try {
@@ -89,8 +92,13 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwner?> {
       state = null;
       _removeLoginFromPrefs();
     } finally {
-      isLoading = false; // データ取得後はローディングを終了
-      state = state; // 状態を更新
+      isLoading = false;
+      state = state;
     }
+  }
+
+  Future<void> logout() async {
+    state = null;
+    _removeLoginFromPrefs();
   }
 }

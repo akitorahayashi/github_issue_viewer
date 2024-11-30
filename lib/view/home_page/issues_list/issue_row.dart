@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/model/giv_issue.dart';
+import 'package:github_issues_viewer/model/giv_issues/giv_issue.dart';
 
 class IssueRow extends StatefulWidget {
   final GIVIssue gvIssue;
@@ -15,9 +15,8 @@ class _IssueRowState extends State<IssueRow> {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(widget.gvIssue.title),
-      subtitle: _shouldShowDetail ? Text(widget.gvIssue.title) : null,
+      subtitle: _shouldShowDetail ? Text(widget.gvIssue.body) : null,
       onTap: () {
-        // Issue詳細画面への遷移を実装可能
         setState(() {
           _shouldShowDetail = !_shouldShowDetail;
         });

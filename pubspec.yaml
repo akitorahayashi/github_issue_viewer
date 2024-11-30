@@ -39,6 +39,7 @@ dependencies:
   graphql_flutter: ^5.1.2
   flutter_dotenv: ^5.2.1
   http: ^0.13.6
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:

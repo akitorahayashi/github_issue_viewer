@@ -19,4 +19,4 @@
         <li>任意の公開リポジトリ内のすべてのIssueを表示する機能</li>
         <li>ラベルのリストを任意の公開リポジトリから取得し、これを基に特定のラベルが付与されたIssueをまとめて表示する機能</li>
     </ul>
-    <p>などの機能はすでに完成しており、現在はさらに便利にするための追加機能を開発中です(<a href="https://github.com/akitorahayashi/github_issues_viewer/issues">Issues</a>参照)。</p>
+    <p>などの機能はすでに完成しており、現在さらにも便利にするための追加機能を開発中です！(<a href="https://github.com/akitorahayashi/github_issues_viewer/issues">Issues</a>参照)。</p>

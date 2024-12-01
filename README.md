@@ -20,4 +20,4 @@
         <li>リポジトリ内のすべてのIssueを表示する機能</li>
         <li>取得したラベルリストを基に特定のラベルが付与されたIssueをまとめて表示する機能</li>
     </ul>
-    <p>これらの機能はすでに完成しています。現在は、さらに便利にするための追加機能を開発中です(<a href="https://github.com/akitorahayashi/github_issues_viewer/issues">Issues</a>参照)。</p>
+    <p>などの機能はすでに完成しており、現在はさらに便利にするための追加機能を開発中です(<a href="https://github.com/akitorahayashi/github_issues_viewer/issues">Issues</a>参照)。</p>

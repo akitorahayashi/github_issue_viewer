@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/repository_owner/repository_owner_provider.dart';
 import 'package:github_issues_viewer/view/login_form/login_form.dart';
 import 'package:github_issues_viewer/view/repository_list/repository_list.dart';
+import 'package:github_issues_viewer/view_model/repository_owner_provider.dart';
 
 class AccountPage extends ConsumerStatefulWidget {
   const AccountPage({super.key});

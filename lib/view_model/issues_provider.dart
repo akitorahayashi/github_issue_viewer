@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'giv_issue.dart';
-import '../giv_graphql_client.dart';
+import '../model/giv_issue.dart';
+import '../model/giv_graphql_client.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 

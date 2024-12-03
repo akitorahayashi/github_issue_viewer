@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/repository_owner/repository_owner_provider.dart';
 import 'package:github_issues_viewer/view/issues_dashboard/issues_list/issue_row.dart';
-import '../../../model/giv_issues/issues_provider.dart';
+import 'package:github_issues_viewer/view_model/issues_provider.dart';
+import 'package:github_issues_viewer/view_model/repository_owner_provider.dart';
 
 class IssuesList extends ConsumerStatefulWidget {
   final String repositoryName;

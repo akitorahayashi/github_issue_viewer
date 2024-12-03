@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/model/giv_issues/giv_issue.dart';
+import 'package:github_issues_viewer/model/giv_issue.dart';
 import 'package:github_issues_viewer/styles.dart';
 
 class IssueRow extends StatefulWidget {

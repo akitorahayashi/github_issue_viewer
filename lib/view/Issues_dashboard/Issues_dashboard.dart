@@ -17,12 +17,14 @@ class IssuesDashboardState extends ConsumerState<IssuesDashboard> {
   @override
   void initState() {
     super.initState();
-    final owner = ref.read(repositoryOwnerProvider).owner;
-    // ラベルを初期化時に非同期で取得
-    ref.read(labelsProvider.notifier).fetchLabels(
-          login: owner!.login,
-          name: widget.repository.name,
-        );
+    Future.microtask(() {
+      final ownerState = ref.read(repositoryOwnerProvider).owner;
+      // ラベルを初期化時に非同期で取得
+      ref.read(labelsProvider.notifier).fetchLabels(
+            login: ownerState!.login,
+            name: widget.repository.name,
+          );
+    });
   }
 
   @override

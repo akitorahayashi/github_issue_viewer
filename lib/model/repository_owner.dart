@@ -1,4 +1,4 @@
-import 'package:github_issues_viewer/model/repository_owner/giv_repository.dart';
+import 'package:github_issues_viewer/model/giv_repository.dart';
 
 /// Repository Owner モデル
 class RepositoryOwner {

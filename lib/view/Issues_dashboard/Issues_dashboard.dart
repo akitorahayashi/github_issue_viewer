@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/repository_owner/giv_repository.dart';
+import 'package:github_issues_viewer/model/giv_repository.dart';
 import 'package:github_issues_viewer/view/Issues_dashboard/issues_list/issues_list.dart';
 import 'package:github_issues_viewer/view_model/repository_owner_provider.dart';
 import 'package:github_issues_viewer/view_model/labels_provider.dart'; // labelsProviderをインポート

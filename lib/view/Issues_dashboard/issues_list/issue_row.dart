@@ -1,45 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:github_issues_viewer/model/giv_issue.dart';
 import 'package:github_issues_viewer/styles.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class IssueRow extends StatefulWidget {
+class IssueRow extends HookWidget {
   final GIVIssue gvIssue;
   const IssueRow({super.key, required this.gvIssue});
 
   @override
-  State<IssueRow> createState() => _IssueRowState();
-}
-
-class _IssueRowState extends State<IssueRow> {
-  bool _shouldShowDetail = false;
-
-  @override
   Widget build(BuildContext context) {
+    final shouldShowDetail = useState(false);
+
     return ListTile(
-      title: Text(widget.gvIssue.title),
-      subtitle: _shouldShowDetail
+      title: Text(gvIssue.title),
+      subtitle: shouldShowDetail.value
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.gvIssue.body),
+                Text(gvIssue.body),
                 const SizedBox(height: 8),
-                Text('Author: ${widget.gvIssue.author}'),
-                Text('Created at: ${formatDate(widget.gvIssue.createdAt)}'),
+                Text('Author: ${gvIssue.author}'),
+                Text('Created at: ${formatDate(gvIssue.createdAt)}'),
                 Text(
-                  'Status: ${widget.gvIssue.isClosed ? "Closed" : "Open"}',
+                  'Status: ${gvIssue.isClosed ? "Closed" : "Open"}',
                   style: TextStyle(
-                    color: widget.gvIssue.isClosed ? Colors.green : Colors.red,
+                    color: gvIssue.isClosed ? Colors.green : Colors.red,
                   ),
                 ),
-                Text('GitHub URL: ${widget.gvIssue.githubUrl}'),
+                Text('GitHub URL: ${gvIssue.githubUrl}'),
               ],
             )
           : null,
-      onTap: () {
-        setState(() {
-          _shouldShowDetail = !_shouldShowDetail;
-        });
-      },
+      onTap: () => shouldShowDetail.value = !shouldShowDetail.value,
     );
   }
 }

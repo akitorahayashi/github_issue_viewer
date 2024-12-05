@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_issues_viewer/model/giv_graphql_client.dart';
-import 'package:github_issues_viewer/model/repository_owner/repository_owner.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:github_issues_viewer/model/repository_owner.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class RepositoryOwnerState {
   final RepositoryOwner? owner;

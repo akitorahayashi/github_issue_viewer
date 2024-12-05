@@ -1,16 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
 import '../model/giv_issue.dart';
-import '../model/giv_graphql_client.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 final issuesProvider =
     StateNotifierProvider<IssuesNotifier, AsyncValue<List<GIVIssue>>>(
-  (ref) => IssuesNotifier(),
+  (ref) => IssuesNotifier(ref),
 );
 
 class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
-  IssuesNotifier() : super(const AsyncValue.loading());
+  IssuesNotifier(this.ref) : super(const AsyncValue.loading());
+
+  final Ref ref;
 
   // ラベルの状態を管理
   AsyncValue<List<String>> labelsState = const AsyncValue.loading();
@@ -23,7 +25,7 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
   }) async {
     state = const AsyncValue.loading();
 
-    final client = GIVGraphqlClient.getGraphQLClient();
+    final client = ref.read(graphQLClientProvider);
 
     // クエリを条件で分岐
     final query = label != null
@@ -70,7 +72,7 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
 
     // クエリ変数を動的に設定
     final Map<String, dynamic> variables = {
-      'login': login, // loginをownerに変換
+      'login': login,
       'name': name,
       if (label != null) 'label': label,
     };
@@ -100,7 +102,7 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
           createdAt: node['createdAt'] ?? '',
           author: node['author']['login'] ?? '',
           githubUrl: node['url'] ?? '',
-          isClosed: isClosed, // isClosedを設定
+          isClosed: isClosed,
         );
       }).toList());
     } catch (e, stack) {

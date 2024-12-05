@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/giv_graphql_client.dart';
 import 'package:github_issues_viewer/model/repository_owner.dart';
+import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -25,14 +25,16 @@ class RepositoryOwnerState {
 // Provider
 final repositoryOwnerProvider =
     StateNotifierProvider<RepositoryOwnerNotifier, RepositoryOwnerState>(
-  (ref) => RepositoryOwnerNotifier(),
+  (ref) => RepositoryOwnerNotifier(ref),
 );
 
 /// Repository Owner を管理する Notifier
 class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
-  RepositoryOwnerNotifier() : super(RepositoryOwnerState()) {
+  RepositoryOwnerNotifier(this.ref) : super(RepositoryOwnerState()) {
     _loadLoginFromPrefs();
   }
+
+  final Ref ref;
 
   // SharedPreferences からログイン情報を読み込み
   Future<void> _loadLoginFromPrefs() async {
@@ -59,21 +61,7 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
 
   // GraphQL からユーザーデータを取得
   Future<void> fetchOwnerData(String ownerLogin) async {
-    try {
-      final token = GIVGraphqlClient.token ?? '';
-      if (token.isEmpty) {
-        throw Exception('GitHub Personal Access Token が指定されていません。');
-      }
-
-      final graphQLClient = GraphQLClient(
-        link: HttpLink(
-          GIVGraphqlClient.apiEndpoint,
-          defaultHeaders: {'Authorization': 'Bearer $token'},
-        ),
-        cache: GraphQLCache(store: InMemoryStore()),
-      );
-
-      const query = '''
+    const query = '''
       query(\$login: String!) {
         user(login: \$login) {
           name
@@ -93,9 +81,15 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
       }
       ''';
 
-      final result = await graphQLClient.query(
-        QueryOptions(document: gql(query), variables: {'login': ownerLogin}),
-      );
+    final QueryOptions options = QueryOptions(
+      document: gql(query),
+      variables: {'login': ownerLogin},
+    );
+
+    final client = ref.read(graphQLClientProvider);
+
+    try {
+      final result = await client.query(options);
 
       if (result.hasException) {
         throw Exception('Failed to fetch data: ${result.exception.toString()}');

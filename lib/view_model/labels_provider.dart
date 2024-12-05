@@ -1,21 +1,21 @@
-import 'package:github_issues_viewer/model/giv_graphql_client.dart';
+import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final labelsProvider =
     StateNotifierProvider<LabelsNotifier, AsyncValue<List<String>>>((ref) {
-  return LabelsNotifier();
+  return LabelsNotifier(ref);
 });
 
 class LabelsNotifier extends StateNotifier<AsyncValue<List<String>>> {
-  LabelsNotifier() : super(const AsyncValue.loading());
+  final Ref ref;
+
+  LabelsNotifier(this.ref) : super(const AsyncValue.loading());
 
   Future<void> fetchLabels(
       {required String login, required String name}) async {
     state = const AsyncValue.loading();
-
-    final client = GIVGraphqlClient.getGraphQLClient();
 
     // GraphQL query with placeholders for repository owner and name
     const String readLabels = """
@@ -34,10 +34,12 @@ class LabelsNotifier extends StateNotifier<AsyncValue<List<String>>> {
     final QueryOptions options = QueryOptions(
       document: gql(readLabels),
       variables: {
-        'owner': login, // Pass the 'login' as the repository owner
-        'name': name, // Pass the 'name' as the repository name
+        'owner': login,
+        'name': name,
       },
     );
+
+    final client = ref.read(graphQLClientProvider);
 
     try {
       final result = await client.query(options);

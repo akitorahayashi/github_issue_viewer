@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_issues_viewer/model/repository_owner/giv_repository.dart';
 import 'package:github_issues_viewer/view/Issues_dashboard/issues_list/issues_list.dart';
 import 'package:github_issues_viewer/view_model/repository_owner_provider.dart';
+import 'package:github_issues_viewer/view_model/labels_provider.dart'; // labelsProviderをインポート
 
 class IssuesDashboard extends ConsumerStatefulWidget {
   final GIVRepository repository;
@@ -13,36 +14,23 @@ class IssuesDashboard extends ConsumerStatefulWidget {
 }
 
 class IssuesDashboardState extends ConsumerState<IssuesDashboard> {
-  late Future<List<String>> labelsFuture;
-
   @override
   void initState() {
     super.initState();
     final owner = ref.read(repositoryOwnerProvider).owner;
     // ラベルを初期化時に非同期で取得
-    labelsFuture = widget.repository
-        .fetchLabels(login: owner!.login, name: widget.repository.name);
+    ref.read(labelsProvider.notifier).fetchLabels(
+          login: owner!.login,
+          name: widget.repository.name,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-      future: labelsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
+    final labelsState = ref.watch(labelsProvider);
 
-        if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(child: Text('Error: ${snapshot.error}')),
-          );
-        }
-
-        // ラベルが正常に取得できた場合
-        final labels = snapshot.data!;
+    return labelsState.when(
+      data: (labels) {
         final allLabels = ['全て', ...labels];
 
         return DefaultTabController(
@@ -77,6 +65,12 @@ class IssuesDashboardState extends ConsumerState<IssuesDashboard> {
           ),
         );
       },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        body: Center(child: Text('Error: $error')),
+      ),
     );
   }
 }

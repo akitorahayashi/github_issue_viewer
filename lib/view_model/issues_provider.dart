@@ -25,8 +25,6 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
   }) async {
     state = const AsyncValue.loading();
 
-    final client = ref.read(graphQLClientProvider);
-
     // クエリを条件で分岐
     final query = label != null
         ? '''
@@ -76,6 +74,8 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
       'name': name,
       if (label != null) 'label': label,
     };
+
+    final client = ref.read(givGraphQLClientProvider);
 
     try {
       // GraphQL クエリ実行

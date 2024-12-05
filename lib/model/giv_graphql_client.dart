@@ -1,26 +1,16 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class GIVGraphqlClient {
-  final String? _token;
-  final String _apiEndpoint;
-  late final GraphQLClient _client;
-
+class GIVGraphqlClient extends GraphQLClient {
   GIVGraphqlClient()
-      : _token = dotenv.env['GITHUB_PERSONAL_ACCESS_TOKEN'],
-        _apiEndpoint = 'https://api.github.com/graphql' {
-    final link = HttpLink(
-      _apiEndpoint,
-      defaultHeaders: {
-        'Authorization': 'Bearer $_token',
-      },
-    );
-
-    _client = GraphQLClient(
-      link: link,
-      cache: GraphQLCache(store: InMemoryStore()),
-    );
-  }
-
-  GraphQLClient get client => _client;
+      : super(
+          link: HttpLink(
+            'https://api.github.com/graphql',
+            defaultHeaders: {
+              'Authorization':
+                  'Bearer ${dotenv.env['GITHUB_PERSONAL_ACCESS_TOKEN']}',
+            },
+          ),
+          cache: GraphQLCache(store: InMemoryStore()),
+        );
 }

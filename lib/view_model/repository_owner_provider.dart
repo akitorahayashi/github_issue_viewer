@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_issues_viewer/model/external/giv_pref.dart';
 import 'package:github_issues_viewer/model/repository_owner.dart';
 import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class RepositoryOwnerState {
@@ -38,55 +38,68 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
 
   // SharedPreferences からログイン情報を読み込み
   Future<void> _loadLoginFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final login = prefs.getString('ownerLogin');
-    if (login != null) {
-      await fetchOwnerData(login);
-    } else {
+    try {
+      final prefs = await GIVPref().getPref;
+      final login = prefs.getString('ownerLogin');
+      if (login != null) {
+        await fetchOwnerData(login);
+      } else {
+        state = state.copyWith(owner: null, isLoading: false);
+      }
+    } catch (e) {
+      print('Failed to load login from prefs: $e');
       state = state.copyWith(owner: null, isLoading: false);
     }
   }
 
   // SharedPreferences にログイン情報を保存
   Future<void> _saveLoginToPrefs(String login) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('ownerLogin', login);
+    try {
+      final prefs = await GIVPref().getPref;
+      await prefs.setString('ownerLogin', login);
+    } catch (e) {
+      print('Failed to save login to prefs: $e');
+    }
   }
 
   // SharedPreferences からログイン情報を削除
   Future<void> _removeLoginFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('ownerLogin');
+    try {
+      final prefs = await GIVPref().getPref;
+      await prefs.remove('ownerLogin');
+    } catch (e) {
+      print('Failed to remove login from prefs: $e');
+    }
   }
 
   // GraphQL からユーザーデータを取得
   Future<void> fetchOwnerData(String ownerLogin) async {
     const query = '''
-      query(\$login: String!) {
-        user(login: \$login) {
-          name
-          login
-          avatarUrl
-          repositories(first: 100, privacy: PUBLIC) {
-            nodes {
+    query(\$login: String!) {
+      user(login: \$login) {
+        name
+        login
+        avatarUrl
+        repositories(first: 100, privacy: PUBLIC) {
+          nodes {
+            name
+            description
+            updatedAt
+            primaryLanguage {
               name
-              description
-              updatedAt
-              primaryLanguage {
-                name
-              }
             }
           }
         }
       }
-      ''';
+    }
+  ''';
 
     final QueryOptions options = QueryOptions(
       document: gql(query),
       variables: {'login': ownerLogin},
     );
 
-    final client = ref.read(graphQLClientProvider);
+    final client = ref.read(givGraphQLClientProvider);
 
     try {
       final result = await client.query(options);
@@ -95,9 +108,20 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
         throw Exception('Failed to fetch data: ${result.exception.toString()}');
       }
 
-      final owner = RepositoryOwner.fromJson({'user': result.data!['user']});
-      state = state.copyWith(owner: owner, isLoading: false);
+      final data = result.data?['user'];
 
+      final repositories =
+          data['repositories']?['nodes'] as List<dynamic>? ?? [];
+      final owner = RepositoryOwner.fromJson({
+        'user': {
+          ...data,
+          'repositories': {
+            'nodes': repositories,
+          },
+        },
+      });
+
+      state = state.copyWith(owner: owner, isLoading: false);
       await _saveLoginToPrefs(ownerLogin);
     } catch (e) {
       print('Failed to fetch RepositoryOwner: $e');

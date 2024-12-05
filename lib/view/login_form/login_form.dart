@@ -30,16 +30,12 @@ class LoginForm extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () async {
-                    final login = _controller.text;
-                    if (login.isNotEmpty) {
-                      try {
-                        await notifier.fetchOwnerData(login);
-                      } catch (e) {
-                        print(e.toString());
-                      }
-                    }
-                  },
+                  onPressed: _controller.text.trim().isEmpty
+                      ? null
+                      : () async {
+                          final login = _controller.text.trim();
+                          await notifier.fetchOwnerData(login);
+                        },
                   child: const Text('Fetch Repository Data'),
                 ),
               ],

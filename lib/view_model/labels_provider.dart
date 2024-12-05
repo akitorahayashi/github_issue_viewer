@@ -39,7 +39,7 @@ class LabelsNotifier extends StateNotifier<AsyncValue<List<String>>> {
       },
     );
 
-    final client = ref.read(graphQLClientProvider);
+    final client = ref.read(givGraphQLClientProvider);
 
     try {
       final result = await client.query(options);

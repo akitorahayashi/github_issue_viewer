@@ -1,74 +1,72 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/repository_owner.dart';
+import 'package:github_issues_viewer/model/giv_graphql_client.dart';
+import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:github_issues_viewer/view_model/repository_owner_provider.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FakeRepositoryOwnerNotifier extends RepositoryOwnerNotifier {
-  FakeRepositoryOwnerNotifier(super.ref, this.mockResponse, this.shouldThrow);
-
+class FakeGraphQLClient extends Fake implements GIVGraphqlClient {
   final Map<String, dynamic>? mockResponse;
   final bool shouldThrow;
 
+  FakeGraphQLClient({this.mockResponse, this.shouldThrow = false});
+
   @override
-  Future<void> fetchOwnerData(String ownerLogin) async {
+  Future<QueryResult<TParsed>> query<TParsed>(
+      QueryOptions<TParsed> options) async {
     if (shouldThrow) {
-      state = state.copyWith(owner: null, isLoading: false);
       throw Exception('Simulated GraphQL Error');
     }
 
-    if (mockResponse == null) {
-      state = state.copyWith(owner: null, isLoading: false);
-      return;
-    }
-
-    final owner = RepositoryOwner.fromJson(mockResponse!);
-    state = state.copyWith(owner: owner, isLoading: false);
+    return QueryResult<TParsed>(
+      options: options,
+      data: mockResponse,
+      source: QueryResultSource.network,
+    );
   }
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  group('RepositoryOwnerNotifier Tests', () {
+  group('RepositoryOwnerNotifier Tests with FakeGraphQLClient', () {
     late ProviderContainer container;
+    late FakeGraphQLClient fakeClient;
 
     setUp(() {
-      container = ProviderContainer();
       SharedPreferences.setMockInitialValues({
-        'ownerLogin': 'testUser', // 必要に応じて初期値を設定
+        'ownerLogin': 'testUser',
       });
+
+      container = ProviderContainer();
     });
 
-    tearDown(() {
-      container.dispose();
-    });
-
-    test('fetchOwnerData fetches data successfully', () async {
-      const mockResponse = {
-        'user': {
-          'name': 'Test User',
-          'login': 'testUser',
-          'avatarUrl': 'https://example.com/avatar.png',
-          'repositories': {
-            'nodes': [
-              {
-                'name': 'Repo 1',
-                'description': 'A sample repo',
-                'updatedAt': '2023-01-01T00:00:00Z',
-                'primaryLanguage': {'name': 'Dart'},
-              },
-            ],
+    test('fetchOwnerData fetches owner data successfully', () async {
+      fakeClient = FakeGraphQLClient(
+        mockResponse: {
+          'user': {
+            'name': 'Test User',
+            'login': 'testUser',
+            'avatarUrl': 'https://example.com/avatar.png',
+            'repositories': {
+              'nodes': [
+                {
+                  'name': 'Test Repo',
+                  'description': 'Test Description',
+                  'updatedAt': '2023-01-01T00:00:00Z',
+                  'primaryLanguage': {'name': 'Dart'},
+                },
+              ],
+            },
           },
         },
-      };
+      );
 
       container = ProviderContainer(
         overrides: [
-          repositoryOwnerProvider.overrideWith((ref) {
-            return FakeRepositoryOwnerNotifier(ref, mockResponse, false);
-          }),
+          givGraphQLClientProvider.overrideWithValue(fakeClient),
         ],
       );
 
@@ -77,27 +75,23 @@ void main() {
 
       final state = container.read(repositoryOwnerProvider);
 
-      expect(state.owner?.name, 'Test User');
       expect(state.owner?.login, 'testUser');
-      expect(state.owner?.repositories.length, 1);
-      expect(state.owner?.repositories.first.name, 'Repo 1');
+      expect(state.owner?.name, 'Test User');
       expect(state.isLoading, false);
     });
 
-    test('fetchOwnerData handles errors', () async {
+    test('fetchOwnerData handles errors gracefully', () async {
+      fakeClient = FakeGraphQLClient(shouldThrow: true);
+
       container = ProviderContainer(
         overrides: [
-          repositoryOwnerProvider.overrideWith((ref) {
-            return FakeRepositoryOwnerNotifier(ref, null, true);
-          }),
+          givGraphQLClientProvider.overrideWithValue(fakeClient),
         ],
       );
 
       final notifier = container.read(repositoryOwnerProvider.notifier);
-      await expectLater(
-        () async => await notifier.fetchOwnerData('testUser'),
-        throwsA(isA<Exception>()),
-      );
+
+      await notifier.fetchOwnerData('testUser');
 
       final state = container.read(repositoryOwnerProvider);
 

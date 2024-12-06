@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/repository_owner.dart';
+import 'package:github_issues_viewer/model/repository_owner/repository_owner.dart';
 import 'package:github_issues_viewer/view/repository_list/owner_card.dart';
 import 'package:github_issues_viewer/view/repository_list/repository_row.dart';
 

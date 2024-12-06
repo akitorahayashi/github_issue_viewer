@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_issues_viewer/model/external/giv_pref.dart';
-import 'package:github_issues_viewer/model/repository_owner.dart';
+import 'package:github_issues_viewer/model/giv_repository/giv_repository.dart';
+import 'package:github_issues_viewer/model/repository_owner/repository_owner.dart';
 import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -110,18 +111,29 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
 
       final data = result.data?['user'];
 
-      final repositories =
-          data['repositories']?['nodes'] as List<dynamic>? ?? [];
-      final owner = RepositoryOwner.fromJson({
-        'user': {
-          ...data,
-          'repositories': {
-            'nodes': repositories,
-          },
-        },
-      });
+      if (data == null) {
+        throw Exception('User data is null');
+      }
 
-      state = state.copyWith(owner: owner, isLoading: false);
+      final fetchedRepositories =
+          (data['repositories']?['nodes'] as List<dynamic>? ?? [])
+              .map((repo) => GIVRepository.fromJson({
+                    'name': repo['name'] ?? 'Unknown',
+                    'description': repo['description'] ?? '',
+                    'updatedAt': repo['updatedAt'] ?? '',
+                    'primaryLanguage':
+                        repo['primaryLanguage']?['name'] ?? 'Unknown',
+                  }))
+              .toList();
+
+      final repositoryOwner = RepositoryOwner(
+        name: data['name'] ?? 'Unknown',
+        login: data['login'] ?? 'Unknown',
+        avatarUrl: data['avatarUrl'] ?? '',
+        repositories: fetchedRepositories,
+      );
+
+      state = state.copyWith(owner: repositoryOwner, isLoading: false);
       await _saveLoginToPrefs(ownerLogin);
     } catch (e) {
       print('Failed to fetch RepositoryOwner: $e');

@@ -31,7 +31,7 @@ class FakeGraphQLClient extends Fake implements GIVGraphqlClient {
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  group('RepositoryOwnerNotifier Tests with FakeGraphQLClient', () {
+  group('RepositoryOwnerNotifierのテスト', () {
     late ProviderContainer container;
     late FakeGraphQLClient fakeClient;
 
@@ -43,7 +43,7 @@ void main() {
       container = ProviderContainer();
     });
 
-    test('fetchOwnerData fetches owner data successfully', () async {
+    test('fetchOwnerDataが正常にデータを取得できる', () async {
       fakeClient = FakeGraphQLClient(
         mockResponse: {
           'user': {
@@ -80,7 +80,7 @@ void main() {
       expect(state.isLoading, false);
     });
 
-    test('fetchOwnerData handles errors gracefully', () async {
+    test('fetchOwnerDataがエラーを正しく処理する', () async {
       fakeClient = FakeGraphQLClient(shouldThrow: true);
 
       container = ProviderContainer(
@@ -97,6 +97,158 @@ void main() {
 
       expect(state.owner, isNull);
       expect(state.isLoading, false);
+    });
+
+    test('空のリポジトリリストが返ってきた場合、データが正しく処理される', () async {
+      fakeClient = FakeGraphQLClient(
+        mockResponse: {
+          'user': {
+            'name': 'Test User',
+            'login': 'testUser',
+            'avatarUrl': 'https://example.com/avatar.png',
+            'repositories': {
+              'nodes': [], // 空のリポジトリリスト
+            },
+          },
+        },
+      );
+
+      container = ProviderContainer(
+        overrides: [
+          givGraphQLClientProvider.overrideWithValue(fakeClient),
+        ],
+      );
+
+      final notifier = container.read(repositoryOwnerProvider.notifier);
+      await notifier.fetchOwnerData('testUser');
+
+      final state = container.read(repositoryOwnerProvider);
+
+      expect(state.owner?.repositories, isEmpty);
+      expect(state.isLoading, false);
+    });
+
+    test('ユーザーデータが返ってこなかった場合、エラーが正しく処理される', () async {
+      fakeClient = FakeGraphQLClient(
+        mockResponse: {
+          'user': null, // userデータがない
+        },
+      );
+
+      container = ProviderContainer(
+        overrides: [
+          givGraphQLClientProvider.overrideWithValue(fakeClient),
+        ],
+      );
+
+      final notifier = container.read(repositoryOwnerProvider.notifier);
+
+      await notifier.fetchOwnerData('testUser');
+
+      final state = container.read(repositoryOwnerProvider);
+
+      expect(state.owner, isNull);
+      expect(state.isLoading, false);
+    });
+
+    test('特定のフィールドがnullの場合でもデータが正しく処理される', () async {
+      fakeClient = FakeGraphQLClient(
+        mockResponse: {
+          'user': {
+            'name': 'Test User',
+            'login': 'testUser',
+            'avatarUrl': 'https://example.com/avatar.png',
+            'repositories': {
+              'nodes': [
+                {
+                  'name': 'Test Repo',
+                  'description': null, // descriptionがnull
+                  'updatedAt': '2023-01-01T00:00:00Z',
+                  'primaryLanguage': null, // primaryLanguageがnull
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      container = ProviderContainer(
+        overrides: [
+          givGraphQLClientProvider.overrideWithValue(fakeClient),
+        ],
+      );
+
+      final notifier = container.read(repositoryOwnerProvider.notifier);
+      await notifier.fetchOwnerData('testUser');
+
+      final state = container.read(repositoryOwnerProvider);
+      final repositories = state.owner?.repositories ?? [];
+
+      expect(repositories.first.description, '');
+      expect(repositories.first.primaryLanguage, 'Unknown');
+      expect(state.isLoading, false);
+    });
+
+    test('複数のリポジトリがある場合でも正しくデータが処理される', () async {
+      fakeClient = FakeGraphQLClient(
+        mockResponse: {
+          'user': {
+            'name': 'Test User',
+            'login': 'testUser',
+            'avatarUrl': 'https://example.com/avatar.png',
+            'repositories': {
+              'nodes': [
+                {
+                  'name': 'Repo 1',
+                  'description': 'Description 1',
+                  'updatedAt': '2023-01-01T00:00:00Z',
+                  'primaryLanguage': {'name': 'Dart'},
+                },
+                {
+                  'name': 'Repo 2',
+                  'description': 'Description 2',
+                  'updatedAt': '2023-01-02T00:00:00Z',
+                  'primaryLanguage': {'name': 'Flutter'},
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      container = ProviderContainer(
+        overrides: [
+          givGraphQLClientProvider.overrideWithValue(fakeClient),
+        ],
+      );
+
+      final notifier = container.read(repositoryOwnerProvider.notifier);
+      await notifier.fetchOwnerData('testUser');
+
+      final state = container.read(repositoryOwnerProvider);
+      final repositories = state.owner?.repositories ?? [];
+
+      expect(repositories.length, 2);
+      expect(repositories[0].name, 'Repo 1');
+      expect(repositories[1].name, 'Repo 2');
+      expect(state.isLoading, false);
+    });
+
+    test('ログアウト時にSharedPreferencesが正しく削除される', () async {
+      final notifier = container.read(repositoryOwnerProvider.notifier);
+
+      await notifier.logout();
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('ownerLogin'), isNull);
+      expect(container.read(repositoryOwnerProvider).owner, isNull);
+      expect(container.read(repositoryOwnerProvider).isLoading, false);
+    });
+
+    test('初期状態が正しく設定されている', () {
+      final state = container.read(repositoryOwnerProvider);
+      expect(state.owner, isNull);
+      expect(state.isLoading, true);
     });
   });
 }

@@ -126,6 +126,11 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
                   }))
               .toList();
 
+      fetchedRepositories.sort((a, b) {
+        return DateTime.parse(b.updatedAt)
+            .compareTo(DateTime.parse(a.updatedAt));
+      });
+
       final repositoryOwner = RepositoryOwner(
         name: data['name'] ?? 'Unknown',
         login: data['login'] ?? 'Unknown',

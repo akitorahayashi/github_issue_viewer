@@ -18,7 +18,7 @@ class GithubIssuesViewerApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepOrange,
+          seedColor: Colors.lightBlue,
           brightness: Brightness.dark,
         ),
         brightness: Brightness.dark,

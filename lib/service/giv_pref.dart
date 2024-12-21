@@ -1,12 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class GIVPref {
-  static final GIVPref _instance = GIVPref._internal();
+class GIVPrefService {
+  static final GIVPrefService _instance = GIVPrefService._internal();
   static SharedPreferences? _pref;
 
-  GIVPref._internal();
+  GIVPrefService._internal();
 
-  factory GIVPref() {
+  factory GIVPrefService() {
     return _instance;
   }
 

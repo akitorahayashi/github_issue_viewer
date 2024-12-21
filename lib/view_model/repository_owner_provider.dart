@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:github_issues_viewer/model/external/giv_pref.dart';
-import 'package:github_issues_viewer/model/giv_repository/giv_repository.dart';
-import 'package:github_issues_viewer/model/repository_owner/repository_owner.dart';
+import 'package:github_issues_viewer/service/giv_pref.dart';
+import 'package:github_issues_viewer/model/giv_repository.dart';
+import 'package:github_issues_viewer/model/repository_owner.dart';
 import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -40,7 +40,7 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
   // SharedPreferences からログイン情報を読み込み
   Future<void> _loadLoginFromPrefs() async {
     try {
-      final prefs = await GIVPref().getPref;
+      final prefs = await GIVPrefService().getPref;
       final login = prefs.getString('ownerLogin');
       if (login != null) {
         await fetchOwnerData(login);
@@ -56,7 +56,7 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
   // SharedPreferences にログイン情報を保存
   Future<void> _saveLoginToPrefs(String login) async {
     try {
-      final prefs = await GIVPref().getPref;
+      final prefs = await GIVPrefService().getPref;
       await prefs.setString('ownerLogin', login);
     } catch (e) {
       print('Failed to save login to prefs: $e');
@@ -66,7 +66,7 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
   // SharedPreferences からログイン情報を削除
   Future<void> _removeLoginFromPrefs() async {
     try {
-      final prefs = await GIVPref().getPref;
+      final prefs = await GIVPrefService().getPref;
       await prefs.remove('ownerLogin');
     } catch (e) {
       print('Failed to remove login from prefs: $e');

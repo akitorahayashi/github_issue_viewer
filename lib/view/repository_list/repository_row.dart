@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/model/giv_repository/giv_repository.dart';
+import 'package:github_issues_viewer/model/giv_repository.dart';
 import 'package:github_issues_viewer/styles.dart';
 import 'package:github_issues_viewer/view/Issues_dashboard/Issues_dashboard.dart';
 

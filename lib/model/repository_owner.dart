@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../giv_repository/giv_repository.dart';
+import 'giv_repository.dart';
 
-part 'repository_owner.freezed.dart';
-part 'repository_owner.g.dart';
+part 'generate/repository_owner.freezed.dart';
+part 'generate/repository_owner.g.dart';
 
 @freezed
 class RepositoryOwner with _$RepositoryOwner {

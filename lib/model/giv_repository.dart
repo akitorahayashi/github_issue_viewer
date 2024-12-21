@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'giv_repository.freezed.dart';
-part 'giv_repository.g.dart';
+part 'generate/giv_repository.freezed.dart';
+part 'generate/giv_repository.g.dart';
 
 @freezed
 class GIVRepository with _$GIVRepository {

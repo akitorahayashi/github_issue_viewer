@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:github_issues_viewer/model/repository_owner/repository_owner.dart';
+import 'package:github_issues_viewer/model/repository_owner.dart';
 
 class OwnerCard extends StatelessWidget {
   final RepositoryOwner owner;

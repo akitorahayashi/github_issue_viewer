@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_issues_viewer/model/giv_graphql_client.dart';
 import 'package:github_issues_viewer/view_model/graphql_client_provider.dart';
 import '../model/giv_issue.dart';
 
@@ -27,46 +28,8 @@ class IssuesNotifier extends StateNotifier<AsyncValue<List<GIVIssue>>> {
 
     // クエリを条件で分岐
     final query = label != null
-        ? '''
-          query GetIssues(\$login: String!, \$name: String!, \$label: String!) {
-            repository(owner: \$login, name: \$name) {
-              issues(labels: [\$label], first: 10) {
-                edges {
-                  node {
-                    title
-                    body
-                    url
-                    createdAt
-                    author {
-                      login
-                    }
-                    state
-                  }
-                }
-              }
-            }
-          }
-        '''
-        : '''
-          query GetAllIssues(\$login: String!, \$name: String!) {
-            repository(owner: \$login, name: \$name) {
-              issues(first: 20) {
-                edges {
-                  node {
-                    title
-                    body
-                    url
-                    createdAt
-                    author {
-                      login
-                    }
-                    state
-                  }
-                }
-              }
-            }
-          }
-        ''';
+        ? GIVGraphqlClient.fetchIssuesForLabelQuery
+        : GIVGraphqlClient.fetchAllIssuesQuery;
 
     // クエリ変数を動的に設定
     final Map<String, dynamic> variables = {

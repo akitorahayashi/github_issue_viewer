@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:github_issues_viewer/model/giv_graphql_client.dart';
 import 'package:github_issues_viewer/service/giv_pref.dart';
 import 'package:github_issues_viewer/model/giv_repository.dart';
 import 'package:github_issues_viewer/model/repository_owner.dart';
@@ -75,25 +76,7 @@ class RepositoryOwnerNotifier extends StateNotifier<RepositoryOwnerState> {
 
   // GraphQL からユーザーデータを取得
   Future<void> fetchOwnerData(String ownerLogin) async {
-    const query = '''
-    query(\$login: String!) {
-      user(login: \$login) {
-        name
-        login
-        avatarUrl
-        repositories(first: 100, privacy: PUBLIC) {
-          nodes {
-            name
-            description
-            updatedAt
-            primaryLanguage {
-              name
-            }
-          }
-        }
-      }
-    }
-  ''';
+    const query = GIVGraphqlClient.fetchOwnerDataQuery;
 
     final QueryOptions options = QueryOptions(
       document: gql(query),
